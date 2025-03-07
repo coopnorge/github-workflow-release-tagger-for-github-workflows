@@ -1,0 +1,55 @@
+---
+name: CI/CD
+on:
+  pull_request: {}
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+jobs:
+  setup:
+    permissions:
+      contents: read
+      pull-requests: read
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      run-kubernetes-ci: ${{ ( steps.changes.outputs.kubernetes == 'true' || steps.changes.outputs.workflows == 'true' ) && github.event_name == 'pull_request' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3
+        id: changes
+        with:
+          list-files: json
+          filters: .github/path-filters.yaml
+      - name: Debug ...
+        run: |
+          echo ::${{ steps.changes.outputs }}
+
+  kubernetes-ci:
+    # this job is here by default to validate the pallet configurations in the
+    # ./pallet folder
+    name: "Kubernetes CI"
+    permissions:
+      contents: read
+      pull-requests: write
+    concurrency:
+      group: ${{ github.repository }}-${{ github.workflow }}-kubernetes-ci-${{ github.ref }}
+      cancel-in-progress: true
+    needs: setup
+    if: needs.setup.outputs.run-kubernetes-ci == 'true'
+    uses: coopnorge/github-workflow-kubernetes-validation/.github/workflows/kubernetes-validation.yaml@v2.0.5
+    secrets:
+      argocd-api-token: ${{ secrets.ARGOCD_API_TOKEN }}
+
+  kubernetes-ci-check:
+    if: always()
+    needs: kubernetes-ci
+    permissions: {}
+    runs-on: ubuntu-latest
+    steps:
+      - run: exit 1
+        name: "Catch errors"
+        # if the job failed then run exit 1 and fail the CI.
+        if: ${{ needs.kubernetes-ci.result == 'failure' || needs.kubernetes-ci.result == 'cancelled' }}

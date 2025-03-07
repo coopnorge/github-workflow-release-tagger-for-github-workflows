@@ -1,0 +1,7 @@
+kubernetes:
+  - '.pallet/**'
+  - 'devtools/kubernetes.*'
+  - 'docker-compose.yaml'
+workflows:
+  - '.github/workflows/cicd.yaml'
+  - '.github/path-filters.yaml'
