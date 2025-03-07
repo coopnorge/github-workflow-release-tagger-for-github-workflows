@@ -12,7 +12,7 @@ on:
         required: true
         description: Tag name being released.
     secrets:
-      GITHUB_TOKEN:
+      GH_TOKEN:
         required: true
 
 defaults:
@@ -54,4 +54,4 @@ jobs:
           git tag -f "$NEW_TAG"
 
           # Force push the updated tag
-          git push -f https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} refs/tags/"$NEW_TAG"
+          git push -f https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }} refs/tags/"$NEW_TAG"
