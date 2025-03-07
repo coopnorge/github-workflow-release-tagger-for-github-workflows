@@ -1,0 +1,16 @@
+name: Update major release tag
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-major-tag:
+    # The released version will be referenced at a later time
+    uses: ./.github/workflows/release-tagger-for-github-workflows.yaml
+    with:
+      tag-name: ${{ github.event.release.tag_name }}
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
