@@ -1,6 +1,11 @@
 # github-workflow-release-tagger-for-github-workflows
 
-In GitHub actions, the major version tags should be automatically updated when there is a new release so that major version referenced in workflows can use the latest version.
+In GitHub actions, the major version tags should be automatically updated when
+there is a new release so that major version referenced in workflows can use
+the latest version.
+
+The recommendation is to update only the major tag:
+https://github.com/actions/toolkit/blob/main/docs/action-versioning.md
 
 
 ## Configuring your repository

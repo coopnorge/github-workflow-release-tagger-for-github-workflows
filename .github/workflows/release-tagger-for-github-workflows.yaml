@@ -1,0 +1,72 @@
+name: Release Tagger
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+on:
+  workflow_call:
+    inputs:
+      tag-name:
+        type: string
+        required: true
+        description: Tag name being released.
+    secrets:
+      GITHUB_TOKEN:
+        required: true
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Git
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+
+      - name: Verify release commit is in main's history
+        run: |
+          # Get the commit hash for the input tag
+          RELEASE_COMMIT=$(git rev-parse "${{ inputs.tag-name }}")
+          echo "Release tag commit: $RELEASE_COMMIT"
+
+          # Check if the release commit is an ancestor of the current main branch
+          if git merge-base --is-ancestor "$RELEASE_COMMIT" main; then
+            echo "Release commit is part of main's history."
+          else
+            echo "Error: The release commit for ${{ inputs.tag-name }} is not in main's history."
+            exit 1
+          fi
+
+      - name: Remove old tag and tag main with vX
+        run: |
+          # Fetch all tags and checkout the main branch
+          git fetch --all --tags
+          git checkout main
+          git pull origin main
+
+          # Extract vX from vX.Y.Z
+          NEW_TAG=$(echo "${{ inputs.tag-name }}" | cut -d'.' -f1)
+          echo "New major tag will be: $NEW_TAG"
+
+          # Check if tag already exists and delete if it does
+          if git show-ref --tags $NEW_TAG; then
+              echo "Tag $NEW_TAG exists. Deleting it..."
+              git tag -d $NEW_TAG
+              git push --delete origin $NEW_TAG
+          fi
+
+          # Create new tag
+          echo "Creating tag $NEW_TAG"
+          git tag $NEW_TAG
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} refs/tags/$NEW_TAG
