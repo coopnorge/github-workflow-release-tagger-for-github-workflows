@@ -6,6 +6,7 @@ metadata:
   name: repository-config
 spec:
   description: In GitHub actions, the major version tags should be automatically updated when there is a new release so that major version referenced in workflows can use the latest version.
+  visibility: public
   branches:
     default: main
     protection:
