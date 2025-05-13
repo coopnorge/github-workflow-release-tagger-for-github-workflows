@@ -10,11 +10,12 @@ spec:
   branches:
     default: main
     protection:
-    - id: main
-      pattern: main
-      requiredStatusChecks:
-        checks:
-        - "kubernetes-ci-check"
-        - "policy-bot: main"
+      - id: main
+        pattern: main
+        requiredStatusChecks:
+          checks:
+            - "kubernetes-ci-check"
+            - "policy-bot: main"
+            - policy-bot-check
   actions:
     enableReusableWorkflowsForOrganizationAccess: true
