@@ -5,3 +5,5 @@ kubernetes:
 workflows:
   - '.github/workflows/cicd.yaml'
   - '.github/path-filters.yaml'
+techdocs:
+  - 'docs/**'
