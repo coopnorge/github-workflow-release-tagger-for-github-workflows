@@ -7,6 +7,8 @@ metadata:
   annotations:
     github.com/project-slug: coopnorge/github-workflow-release-tagger-for-github-workflows
     backstage.io/techdocs-ref: dir:.
+  tags:
+    - github-workflow
 spec:
   type: library
   owner: engineering
