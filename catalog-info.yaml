@@ -2,9 +2,11 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: github-workflow-release-tagger-for-github-workflows
-  title: Workflow to tag GitHub actions workflows
+  title: Release tagger for GitHub workflows
+  description: Workflow to tag GitHub actions workflows
   annotations:
     github.com/project-slug: coopnorge/github-workflow-release-tagger-for-github-workflows
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: library
   owner: engineering
