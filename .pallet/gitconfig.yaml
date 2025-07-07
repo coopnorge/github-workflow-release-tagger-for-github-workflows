@@ -14,7 +14,7 @@ spec:
       pattern: main
       requiredStatusChecks:
         checks:
-        - "kubernetes-ci-check"
+        - "validate-ci-results"
         - "policy-bot: main"
   actions:
     enableReusableWorkflowsForOrganizationAccess: true

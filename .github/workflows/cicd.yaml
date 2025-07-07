@@ -43,13 +43,14 @@ jobs:
     secrets:
       argocd-api-token: ${{ secrets.ARGOCD_API_TOKEN }}
 
-  kubernetes-ci-check:
+  validate-ci-results:
     if: always()
-    needs: kubernetes-ci
+    needs:
+    - kubernetes-ci
     permissions: {}
     runs-on: ubuntu-latest
     steps:
       - run: exit 1
         name: "Catch errors"
-        # if the job failed then run exit 1 and fail the CI.
-        if: ${{ needs.kubernetes-ci.result == 'failure' || needs.kubernetes-ci.result == 'cancelled' }}
+        # if the job failed or was cancelled then run exit 1 and fail the CI.
+        if: ${{ needs.*.result == 'failure' || needs.*.result == 'cancelled' }}
