@@ -13,7 +13,7 @@ This workflow updates the major tag when there is a minor or a patch release.
 
 The workflow can be used by adding the following file to `.github/workflows`:
 
-```yaml title=.github/workflows/update-major-tag.yaml
+```yaml title=".github/workflows/update-major-tag.yaml"
 name: Update major release tag
 
 on:
