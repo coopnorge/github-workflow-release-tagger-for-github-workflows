@@ -13,7 +13,7 @@ jobs:
       contents: read
       pull-requests: read
     name: Setup
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     outputs:
       run-kubernetes-ci: ${{ ( steps.changes.outputs.kubernetes == 'true' || steps.changes.outputs.workflows == 'true' ) && github.event_name == 'pull_request' }}
       run-techdocs-ci: ${{ steps.changes.outputs.techdocs == 'true' || steps.changes.outputs.workflows == 'true' || github.event_name == 'workflow_dispatch' }}
@@ -70,15 +70,13 @@ jobs:
     uses: coopnorge/github-workflow-techdocs/.github/workflows/techdocs.yaml@v0
 
   validate-ci-results:
-    if: always()
+    if: failure() || cancelled()
     needs:
     - kubernetes-ci
     - techdocs
     - policy-bot
     permissions: {}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
     - run: exit 1
       name: "Catch errors"
-        # if the job failed or was cancelled then run exit 1 and fail the CI.
-      if: ${{ needs.*.result == 'failure' || needs.*.result == 'cancelled' || needs.policy-bot.result == 'failure' || needs.policy-bot.result == 'cancelled' }}
